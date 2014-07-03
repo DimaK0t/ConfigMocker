@@ -14,7 +14,7 @@ using System.Xml.Linq;
 
 namespace MockConfigs
 {
-    public class Mocker
+    public class Mocker : IMocker
     {
         public void MockConfigs()
         {
