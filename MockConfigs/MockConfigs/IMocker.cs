@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MockConfigs
 {
-    interface IMocker
+    public interface IMocker
     {
         void MockConfigs();
     }
