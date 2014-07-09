@@ -7,8 +7,8 @@
     <ProjectGuid>{4304CD01-196A-4D83-A073-661D6D3C021E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MockConfigs</RootNamespace>
-    <AssemblyName>MockConfigs</AssemblyName>
+    <RootNamespace>ConfigMocker</RootNamespace>
+    <AssemblyName>ConfigMocker</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -42,8 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IMocker.cs" />
-    <Compile Include="Mocker.cs" />
+    <Compile Include="IConfigMocker.cs" />
+    <Compile Include="ConfigMocker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

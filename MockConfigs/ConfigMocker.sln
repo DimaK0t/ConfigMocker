@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockConfigs", "MockConfigs\MockConfigs.csproj", "{4304CD01-196A-4D83-A073-661D6D3C021E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigMocker", "ConfigMocker\ConfigMocker.csproj", "{4304CD01-196A-4D83-A073-661D6D3C021E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
