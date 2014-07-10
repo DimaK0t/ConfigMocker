@@ -70,7 +70,7 @@ namespace ConfigMocker
 
         private XDocument GetAlternativeConfigFor(string sectionName)
         {
-            var path = GetPathToAlternativeConfigs("appSettings");
+            var path = GetPathToAlternativeConfigs(sectionName);
 
             return File.Exists(path) ? XDocument.Load(path) : null;
         }
