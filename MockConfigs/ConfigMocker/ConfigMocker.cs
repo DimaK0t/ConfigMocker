@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Web;
 using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Xml.Linq;
@@ -12,6 +14,20 @@ namespace ConfigMocker
 {
     public class ConfigMocker : IConfigMocker
     {
+        private Configuration _config;
+
+        private void LoadConfig()
+        {
+            if (HttpRuntime.AppDomainAppId != null) // web app
+            {
+                _config = WebConfigurationManager.OpenWebConfiguration("~");
+            }
+            else
+            {
+                _config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            }
+        }
+
         public void Mock()
         {
             MockConnectionStrings();
@@ -20,6 +36,11 @@ namespace ConfigMocker
 
         public void MockConnectionStrings()
         {
+            if (_config == null)
+            {
+                LoadConfig();
+            }
+
             var alternativeConfig = GetAlternativeConfigFor("connectionStrings");
 
             if (alternativeConfig == null)
@@ -28,7 +49,7 @@ namespace ConfigMocker
             }
 
             var newConnStrings = alternativeConfig.Descendants("connectionStrings").Elements("add").ToList();
-            var connString = WebConfigurationManager.ConnectionStrings;
+            var connString = ConfigurationManager.ConnectionStrings;
 
             foreach (ConnectionStringSettings cs in connString)
             {
@@ -44,6 +65,11 @@ namespace ConfigMocker
 
         public void MockAppSettings()
         {
+            if (_config == null)
+            {
+                LoadConfig();
+            }
+
             var alternativeConfig = GetAlternativeConfigFor("appSettings");
 
             if (alternativeConfig == null)
@@ -52,7 +78,7 @@ namespace ConfigMocker
             }
 
             var newSettings = alternativeConfig.Descendants("appSettings").Elements("add").ToList();
-            var appSettings = WebConfigurationManager.AppSettings;
+            var appSettings = ConfigurationManager.AppSettings;
 
             for (var i = 0; i < appSettings.Count; i++)
             {
@@ -64,28 +90,32 @@ namespace ConfigMocker
                     appSettings[key] = settingReplacement.Attribute("value").Value;
                 }
             }
-
-            ConfigurationManager.RefreshSection("appSettings");
         }
 
         private XDocument GetAlternativeConfigFor(string sectionName)
         {
-            var path = GetPathToAlternativeConfigs(sectionName);
+            var path = GetPathToAlternativeConfig(sectionName);
 
-            return File.Exists(path) ? XDocument.Load(path) : null;
-        }
-
-        private string GetPathToAlternativeConfigs(string sectionName)
-        {
-            var section = WebConfigurationManager.OpenWebConfiguration(null).GetSection(sectionName);
-            var source = section.SectionInformation.ConfigSource;
-
-            if (string.IsNullOrEmpty(source))
+            if (!File.Exists(path))
             {
-                source = "Web.config";
+                return null;
             }
 
-            return HostingEnvironment.MapPath("~/" + Path.ChangeExtension(source, Environment.MachineName + ".config"));
+            return XDocument.Load(path);
+        }
+
+        private string GetPathToAlternativeConfig(string sectionName)
+        {
+            var section = _config.GetSection(sectionName);
+            var configSource = section.SectionInformation.ConfigSource;
+
+            if (string.IsNullOrEmpty(configSource))
+            {
+                configSource = Path.GetFileName(_config.FilePath);
+            }
+
+            var alternativeConfigPath = Path.ChangeExtension(configSource, Environment.MachineName + ".config");
+            return HostingEnvironment.MapPath("~/" + alternativeConfigPath);
         }
     }
 }
